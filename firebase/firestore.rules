@@ -1,0 +1,111 @@
+rules_version = '2';
+
+// ORBIS — Firestore security rules
+// -----------------------------------------------------------------------------
+// Model:
+//   users/{uid}        — owner read/write only; admin read all.
+//   sightings/{id}     — reporter read/write own; admin read/write all;
+//                        public sightings readable by anyone (name redacted client-side
+//                        if isPublic == false). Server-side, we just allow the read
+//                        when isPublic == true.
+//   interviews/{id}    — public read, admin-only write.
+//   ebook/{id}         — public read, admin-only write.
+// -----------------------------------------------------------------------------
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isValidString(v, maxLen) {
+      return v is string && v.size() <= maxLen;
+    }
+
+    // ---------- users ----------
+    match /users/{uid} {
+      allow read: if isSelf(uid) || isAdmin();
+
+      // First-time create: only by the user themselves; role must be 'user'
+      // unless the email matches the admin allowlist (the client sets that).
+      allow create: if isSelf(uid)
+        && request.resource.data.keys().hasOnly(
+             ['displayName','email','photoURL','role','createdAt'])
+        && isValidString(request.resource.data.displayName, 80)
+        && isValidString(request.resource.data.email, 200)
+        && request.resource.data.role in ['user','admin'];
+
+      // Updates: user may edit their own displayName/photoURL.
+      // role can only be changed by an admin.
+      allow update: if isSelf(uid)
+        && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['displayName','photoURL'])
+        && isValidString(request.resource.data.displayName, 80);
+
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ---------- sightings ----------
+    match /sightings/{id} {
+      // Reads: owner, admin, or anyone if the report is public.
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.reporterUid == request.auth.uid)
+        || resource.data.isPublic == true;
+
+      // Create: must be the signed-in user, status forced to 'pending',
+      // no adminNotes, and required fields present.
+      allow create: if isSignedIn()
+        && request.resource.data.reporterUid == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && (!('adminNotes' in request.resource.data)
+            || request.resource.data.adminNotes == '')
+        && isValidString(request.resource.data.description, 5000)
+        && isValidString(request.resource.data.classification, 80)
+        && request.resource.data.media is list
+        && request.resource.data.media.size() <= 20;
+
+      // Update: owner may edit description / isPublic / media list until status != pending.
+      allow update: if isSignedIn()
+        && resource.data.reporterUid == request.auth.uid
+        && resource.data.status == 'pending'
+        && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['description','isPublic','media','objectShape',
+                      'witnessCount','sightedAt','durationText','location',
+                      'classification']);
+
+      // Admin: full update access (status, adminNotes, anything).
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ---------- interviews ----------
+    match /interviews/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------- ebook ----------
+    match /ebook/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Default deny.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
