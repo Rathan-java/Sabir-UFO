@@ -26,17 +26,36 @@ export async function renderMap() {
 
   // Load data
   let sightings = [];
-  if (isAdmin()) {
-    sightings = await listAllSightings();
-  } else if (s.user) {
-    const [pub, mine] = await Promise.all([
-      listPublicSightings(),
-      listMySightings(s.user.uid),
-    ]);
-    const seen = new Set();
-    sightings = [...pub, ...mine].filter((r) => (seen.has(r.id) ? false : seen.add(r.id)));
-  } else {
-    sightings = await listPublicSightings();
+  try {
+    if (isAdmin()) {
+      sightings = await listAllSightings();
+    } else if (s.user) {
+      const [pub, mine] = await Promise.all([
+        listPublicSightings(),
+        listMySightings(s.user.uid),
+      ]);
+      const seen = new Set();
+      sightings = [...pub, ...mine].filter((r) => (seen.has(r.id) ? false : seen.add(r.id)));
+    } else {
+      sightings = await listPublicSightings();
+    }
+  } catch (err) {
+    console.error('[map]', err);
+    container.remove();
+    const msg = (err?.message || String(err)).toString();
+    const indexUrl = msg.match(/https:\/\/console\.firebase\.google\.com\/[^\s)]+/)?.[0];
+    const wrap = el('div', { class: 'panel', style: 'border-color: var(--red); background: rgba(255, 107, 138, 0.06)' });
+    wrap.append(el('h3', { style: 'margin-top:0; color: var(--red)' }, "Couldn't load the map"));
+    if (indexUrl) {
+      wrap.append(el('p', { class: 'muted', style: 'margin: 0 0 12px' },
+        'A Firestore composite index is missing. Firebase generated a one-click link to create it.'));
+      wrap.append(el('a', { class: 'btn btn-primary', href: indexUrl, target: '_blank', rel: 'noopener noreferrer' },
+        '🔧 Open Firebase to create the index'));
+    } else {
+      wrap.append(el('p', { class: 'muted' }, msg));
+    }
+    view.append(wrap);
+    return;
   }
 
   const map = L.map(container, {
