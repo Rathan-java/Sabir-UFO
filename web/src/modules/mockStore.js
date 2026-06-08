@@ -225,10 +225,31 @@ export const mockStore = {
   listInterviews() {
     return [...state.interviews].sort((a, b) => (a.order || 0) - (b.order || 0));
   },
+  createInterview(data) {
+    const id = uid();
+    state.interviews.push({ id, ...data });
+    persist();
+    return id;
+  },
+  updateInterview(id, patch) {
+    const i = state.interviews.findIndex((iv) => iv.id === id);
+    if (i >= 0) {
+      state.interviews[i] = { ...state.interviews[i], ...patch };
+      persist();
+    }
+  },
+  deleteInterview(id) {
+    state.interviews = state.interviews.filter((iv) => iv.id !== id);
+    persist();
+  },
 
   // ---- ebook ----
   getEbook() {
     return { ...state.ebook };
+  },
+  updateEbook(patch) {
+    state.ebook = { ...state.ebook, ...patch };
+    persist();
   },
 
   _state: state,

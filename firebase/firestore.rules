@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// ORBIS — Firestore security rules
+// Sabir UFO — Firestore security rules
 // -----------------------------------------------------------------------------
 // Model:
 //   users/{uid}        — owner read/write only; admin read all.

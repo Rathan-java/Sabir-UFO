@@ -52,7 +52,7 @@ route('/reports', () => requireAuth(renderMyReports));
 route('/map', () => renderMap());
 route('/interviews', () => renderInterviews());
 route('/ebook', () => renderEbook());
-route('/admin', () => requireAuth(renderAdmin));
+route('/admin', (ctx) => requireAuth(() => renderAdmin(ctx)));
 
 function requireAuth(fn) {
   const s = getSession();

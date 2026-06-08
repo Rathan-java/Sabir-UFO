@@ -1,16 +1,21 @@
-// Admin dashboard — reads ALL sightings, with analytics, filters, and inline
-// status / notes editing. Restricted to users with role === 'admin'.
+// Admin dashboard — sightings review + interviews + eBook management.
+// Restricted to users with role === 'admin'.
 
 import { el, $, $$, debounce, fmtDate, fmtDateShort, lightbox, escapeHtml, toast } from './ui.js';
 import { isAdmin, getSession } from './auth.js';
-import { listAllSightings, updateSighting } from './firebase.js';
+import {
+  listAllSightings, updateSighting,
+  listInterviews, createInterview, updateInterview, deleteInterview,
+  getEbookConfig, updateEbookConfig,
+} from './firebase.js';
 import { STATUSES, HYNEK_CLASSIFICATIONS } from './config.js';
 import { navigate } from './router.js';
 
 let _allRows = [];
 let _filters = { search: '', status: '', classification: '', from: '', to: '' };
+let _currentTab = 'sightings';
 
-export async function renderAdmin() {
+export async function renderAdmin({ query } = {}) {
   const view = document.getElementById('view');
   view.innerHTML = '';
 
@@ -23,27 +28,56 @@ export async function renderAdmin() {
     return;
   }
 
-  view.append(el('div', { class: 'row between', style: 'margin-bottom:18px' }, [
+  _currentTab = (query?.tab) || _currentTab || 'sightings';
+
+  view.append(el('div', { class: 'row between', style: 'margin-bottom:14px' }, [
     el('h2', { style: 'margin:0' }, 'Admin Console'),
     el('a', { class: 'btn btn-ghost', href: '#/dashboard' }, '← Dashboard'),
   ]));
 
-  view.append(loadingState());
+  view.append(renderTabs(_currentTab));
 
+  const body = el('div', { id: 'adminBody' });
+  view.append(body);
+
+  if (_currentTab === 'interviews') {
+    await renderInterviewsTab(body);
+  } else if (_currentTab === 'ebook') {
+    await renderEbookTab(body);
+  } else {
+    await renderSightingsTab(body);
+  }
+}
+
+function renderTabs(active) {
+  const tabs = [
+    { id: 'sightings', label: '🛸 Sightings' },
+    { id: 'interviews', label: '🎥 Interviews' },
+    { id: 'ebook', label: '📖 eBook' },
+  ];
+  const bar = el('div', { class: 'admin-tabs' });
+  for (const t of tabs) {
+    const a = el('a', {
+      href: `#/admin?tab=${t.id}`,
+      class: `admin-tab${active === t.id ? ' active' : ''}`,
+    }, t.label);
+    bar.append(a);
+  }
+  return bar;
+}
+
+// ============================================================
+// TAB 1 — Sightings (the original admin view)
+// ============================================================
+async function renderSightingsTab(body) {
+  body.append(loadingState());
   _allRows = await listAllSightings();
-
-  view.innerHTML = '';
-  view.append(el('div', { class: 'row between', style: 'margin-bottom:18px' }, [
-    el('h2', { style: 'margin:0' }, 'Admin Console'),
-    el('a', { class: 'btn btn-ghost', href: '#/dashboard' }, '← Dashboard'),
-  ]));
-
-  view.append(renderStats(_allRows));
-  view.append(renderChart(_allRows));
-  view.append(renderFilters());
-
+  body.innerHTML = '';
+  body.append(renderStats(_allRows));
+  body.append(renderChart(_allRows));
+  body.append(renderFilters());
   const listWrap = el('div', { id: 'adminList' });
-  view.append(listWrap);
+  body.append(listWrap);
   renderList(listWrap);
 }
 
@@ -304,4 +338,244 @@ function toDate(v) {
   if (typeof v === 'string') return new Date(v);
   if (v?.seconds != null) return new Date(v.seconds * 1000);
   return null;
+}
+
+// ============================================================
+// TAB 2 — Interviews management
+// ============================================================
+async function renderInterviewsTab(body) {
+  body.append(loadingState());
+  const rows = await listInterviews();
+  body.innerHTML = '';
+
+  body.append(el('div', { class: 'panel', style: 'margin-bottom:18px' }, [
+    el('h3', { style: 'margin-top:0' }, 'Add a new interview'),
+    el('p', { class: 'muted', style: 'font-size:13px;margin-top:0' },
+      'Paste a YouTube video ID (e.g. from `youtube.com/watch?v=ABC123`, the ID is `ABC123`).'),
+    interviewForm({}, async (data) => {
+      await createInterview(data);
+      toast('Interview added', 'success');
+      renderInterviewsTab(body);
+    }),
+  ]));
+
+  body.append(el('h3', {}, `Existing interviews (${rows.length})`));
+
+  if (!rows.length) {
+    body.append(el('div', { class: 'empty-state' }, [
+      el('span', { class: 'big' }, '🎥'),
+      el('div', {}, 'No interviews yet — use the form above to add your first one.'),
+    ]));
+    return;
+  }
+
+  for (const iv of rows) {
+    const card = el('div', { class: 'panel', style: 'margin-bottom:12px' });
+    card.append(el('div', { class: 'row gap-sm', style: 'margin-bottom:10px;align-items:flex-start' }, [
+      el('img', {
+        src: `https://img.youtube.com/vi/${encodeURIComponent(iv.youtubeId || '')}/mqdefault.jpg`,
+        alt: '',
+        style: 'width:120px;border-radius:8px;border:1px solid var(--border);flex-shrink:0',
+        onerror: function () { this.style.display = 'none'; },
+      }),
+      el('div', { style: 'flex:1' }, [
+        el('div', { style: 'font-weight:600' }, iv.title || '—'),
+        el('div', { class: 'meta', style: 'font-size:12px' }, [
+          `YouTube ID: ${iv.youtubeId || '—'} · Order: ${iv.order ?? '—'} · `,
+          fmtDateShort(iv.publishedAt),
+        ]),
+      ]),
+    ]));
+    card.append(interviewForm(iv, async (data) => {
+      await updateInterview(iv.id, data);
+      toast('Interview updated', 'success');
+      renderInterviewsTab(body);
+    }, async () => {
+      if (!confirm(`Delete "${iv.title}"? This cannot be undone.`)) return;
+      await deleteInterview(iv.id);
+      toast('Interview deleted', 'info');
+      renderInterviewsTab(body);
+    }));
+    body.append(card);
+  }
+}
+
+function interviewForm(initial, onSave, onDelete) {
+  const form = el('form', { class: 'form', style: 'margin:0' });
+
+  const titleField = el('div', { class: 'field' });
+  titleField.append(el('label', {}, 'Title'));
+  titleField.append(el('input', {
+    type: 'text', name: 'title', value: initial.title || '',
+    required: true, maxlength: 200,
+    placeholder: 'e.g. The Nimitz Encounter — A Pilot\'s Account',
+  }));
+  form.append(titleField);
+
+  const row = el('div', { class: 'form-row' });
+
+  const ytField = el('div', { class: 'field' });
+  ytField.append(el('label', {}, 'YouTube video ID'));
+  ytField.append(el('input', {
+    type: 'text', name: 'youtubeId', value: initial.youtubeId || '',
+    required: true, maxlength: 30,
+    placeholder: 'e.g. dQw4w9WgXcQ',
+  }));
+  row.append(ytField);
+
+  const orderField = el('div', { class: 'field' });
+  orderField.append(el('label', {}, 'Display order (lower = shown first)'));
+  orderField.append(el('input', {
+    type: 'number', name: 'order', value: initial.order ?? 1,
+    min: 0, max: 9999,
+  }));
+  row.append(orderField);
+
+  form.append(row);
+
+  const dateField = el('div', { class: 'field' });
+  dateField.append(el('label', {}, 'Published date'));
+  const pubVal = initial.publishedAt
+    ? new Date(toDate(initial.publishedAt) || initial.publishedAt).toISOString().slice(0, 10)
+    : new Date().toISOString().slice(0, 10);
+  dateField.append(el('input', { type: 'date', name: 'publishedAt', value: pubVal }));
+  form.append(dateField);
+
+  const actions = el('div', { class: 'row gap-sm', style: 'margin-top:6px' });
+  const saveBtn = el('button', { type: 'submit', class: 'btn btn-primary' }, initial.id ? 'Save changes' : 'Add interview');
+  actions.append(saveBtn);
+  if (onDelete) {
+    actions.append(el('button', { type: 'button', class: 'btn btn-danger', onclick: onDelete }, 'Delete'));
+  }
+  form.append(actions);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const title = (fd.get('title') || '').toString().trim();
+    const youtubeId = (fd.get('youtubeId') || '').toString().trim();
+    if (!title || !youtubeId) { toast('Title and YouTube ID are required', 'error'); return; }
+    saveBtn.disabled = true;
+    const original = saveBtn.textContent;
+    saveBtn.textContent = 'Saving…';
+    try {
+      await onSave({
+        title,
+        youtubeId,
+        order: parseInt(fd.get('order'), 10) || 1,
+        publishedAt: fd.get('publishedAt')
+          ? new Date(fd.get('publishedAt')).getTime()
+          : Date.now(),
+      });
+    } catch (err) {
+      console.error(err);
+      toast(err.message || 'Failed to save', 'error');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = original;
+    }
+  });
+
+  return form;
+}
+
+// ============================================================
+// TAB 3 — eBook config
+// ============================================================
+async function renderEbookTab(body) {
+  body.append(loadingState());
+  const existing = (await getEbookConfig()) || {};
+  body.innerHTML = '';
+
+  const wrap = el('div', { class: 'panel' });
+  wrap.append(el('h3', { style: 'margin-top:0' }, 'eBook details'));
+  wrap.append(el('p', { class: 'muted', style: 'font-size:13px;margin-top:0' },
+    'These show on the public /ebook page. The WhatsApp button uses the global admin number from .env.'));
+
+  const form = el('form', { class: 'form' });
+
+  const titleField = el('div', { class: 'field' });
+  titleField.append(el('label', {}, 'Title'));
+  titleField.append(el('input', {
+    type: 'text', name: 'title', value: existing.title || '',
+    required: true, maxlength: 200,
+  }));
+  form.append(titleField);
+
+  const blurbField = el('div', { class: 'field' });
+  blurbField.append(el('label', {}, 'Blurb / description'));
+  blurbField.append(el('textarea', {
+    name: 'blurb', maxlength: 1000,
+    placeholder: 'A short pitch — 1 to 3 sentences.',
+  }, existing.blurb || ''));
+  form.append(blurbField);
+
+  const row = el('div', { class: 'form-row' });
+
+  const priceField = el('div', { class: 'field' });
+  priceField.append(el('label', {}, 'Price (free-form text, e.g. $19.99 or ₹499)'));
+  priceField.append(el('input', {
+    type: 'text', name: 'price', value: existing.price || '', maxlength: 40,
+  }));
+  row.append(priceField);
+
+  const coverField = el('div', { class: 'field' });
+  coverField.append(el('label', {}, 'Cover image URL'));
+  coverField.append(el('input', {
+    type: 'url', name: 'coverImageUrl', value: existing.coverImageUrl || '',
+    placeholder: 'https://…',
+  }));
+  row.append(coverField);
+
+  form.append(row);
+
+  // Live preview
+  const previewWrap = el('div', { class: 'panel', style: 'background:rgba(7,11,26,0.6);margin-top:14px' });
+  previewWrap.append(el('div', { class: 'dim', style: 'font-size:11px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px' }, 'Live preview'));
+  const previewBody = el('div', { class: 'row gap-sm', style: 'gap:14px;align-items:flex-start' });
+  const previewImg = el('img', { src: existing.coverImageUrl || '', alt: '', style: 'width:80px;aspect-ratio:2/3;object-fit:cover;border-radius:6px;border:1px solid var(--border);background:var(--bg-2)', onerror: function () { this.style.opacity = 0.2; } });
+  const previewText = el('div');
+  const previewTitle = el('div', { style: 'font-weight:600' }, existing.title || '(no title)');
+  const previewPrice = el('div', { class: 'dim', style: 'font-size:13px' }, existing.price || '(no price)');
+  const previewBlurb = el('div', { class: 'muted', style: 'font-size:13px;margin-top:4px' }, existing.blurb || '(no blurb)');
+  previewText.append(previewTitle); previewText.append(previewPrice); previewText.append(previewBlurb);
+  previewBody.append(previewImg); previewBody.append(previewText);
+  previewWrap.append(previewBody);
+  form.append(previewWrap);
+
+  form.addEventListener('input', () => {
+    const fd = new FormData(form);
+    previewTitle.textContent = (fd.get('title') || '(no title)').toString();
+    previewPrice.textContent = (fd.get('price') || '(no price)').toString();
+    previewBlurb.textContent = (fd.get('blurb') || '(no blurb)').toString();
+    previewImg.src = (fd.get('coverImageUrl') || '').toString();
+  });
+
+  const saveBtn = el('button', { type: 'submit', class: 'btn btn-primary', style: 'margin-top:6px;align-self:flex-start' }, 'Save eBook');
+  form.append(saveBtn);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const data = {
+      title: (fd.get('title') || '').toString().trim(),
+      blurb: (fd.get('blurb') || '').toString().trim(),
+      price: (fd.get('price') || '').toString().trim(),
+      coverImageUrl: (fd.get('coverImageUrl') || '').toString().trim(),
+    };
+    if (!data.title) { toast('Title is required', 'error'); return; }
+    saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+    try {
+      await updateEbookConfig(data);
+      toast('eBook updated', 'success');
+    } catch (err) {
+      console.error(err);
+      toast(err.message || 'Failed', 'error');
+    } finally {
+      saveBtn.disabled = false; saveBtn.textContent = 'Save eBook';
+    }
+  });
+
+  wrap.append(form);
+  body.append(wrap);
 }

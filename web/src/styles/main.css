@@ -582,6 +582,35 @@ body {
 }
 
 /* ---------- admin ---------- */
+.admin-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 18px;
+  padding: 6px;
+  background: rgba(13, 19, 48, 0.4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  flex-wrap: wrap;
+}
+.admin-tab {
+  padding: 9px 16px;
+  border-radius: 10px;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background .2s, color .2s, box-shadow .2s;
+}
+.admin-tab:hover {
+  color: var(--text);
+  background: rgba(123, 233, 255, 0.06);
+}
+.admin-tab.active {
+  color: var(--cyan);
+  background: rgba(123, 233, 255, 0.14);
+  box-shadow: 0 0 18px rgba(123, 233, 255, 0.2);
+}
+
 .stats-strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

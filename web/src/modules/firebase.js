@@ -124,11 +124,32 @@ export async function listInterviews() {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }
 
+export async function createInterview(data) {
+  if (isDemo()) return mockStore.createInterview(data);
+  const ref = await addDoc(collection(db, 'interviews'), data);
+  return ref.id;
+}
+
+export async function updateInterview(id, patch) {
+  if (isDemo()) return mockStore.updateInterview(id, patch);
+  await updateDoc(doc(db, 'interviews', id), patch);
+}
+
+export async function deleteInterview(id) {
+  if (isDemo()) return mockStore.deleteInterview(id);
+  await deleteDoc(doc(db, 'interviews', id));
+}
+
 // -------- eBook --------
 export async function getEbookConfig() {
   if (isDemo()) return mockStore.getEbook();
   const snap = await getDoc(doc(db, 'ebook', 'config'));
   return snap.exists() ? snap.data() : null;
+}
+
+export async function updateEbookConfig(data) {
+  if (isDemo()) return mockStore.updateEbook(data);
+  await setDoc(doc(db, 'ebook', 'config'), data, { merge: true });
 }
 
 // -------- helpers --------
