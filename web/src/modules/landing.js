@@ -1,6 +1,6 @@
 // Signed-out landing page — hero, sign-in CTA, brief feature strip.
 
-import { el } from './ui.js';
+import { el, icon } from './ui.js';
 import { signIn } from './auth.js';
 
 export function renderLanding() {
@@ -8,10 +8,10 @@ export function renderLanding() {
   view.innerHTML = '';
 
   const hero = el('section', { class: 'hero' });
-  hero.append(el('div', { class: 'tag' }, 'DOCUMENTING UFO ENCOUNTERS'));
+  hero.append(el('div', { class: 'tag' }, 'India · UFO sighting archive'));
   hero.append(el('h1', {}, 'Sabir UFO'));
   hero.append(el('p', {},
-    'A serious archive for people who have seen something they cannot explain. Report what you witnessed, browse field interviews, and contribute to ongoing investigation.'));
+    'A serious archive for people across India who have seen something they cannot explain. Report what you witnessed, browse field interviews, and contribute to ongoing investigation.'));
 
   const ctaRow = el('div', { class: 'row', style: 'justify-content:center;gap:14px;margin-top:8px' });
   ctaRow.append(el('button', { class: 'btn btn-google', onclick: signIn }, [googleIcon(), 'Continue with Google']));
@@ -20,18 +20,18 @@ export function renderLanding() {
   view.append(hero);
 
   const grid = el('div', { class: 'cards-grid' });
-  grid.append(featureCard('🛸', 'Easy-to-fill report',
-    'Pick a category in plain language, attach photos and videos, record where and when you saw it, and how long it lasted.'));
-  grid.append(featureCard('🛰️', 'Reviewed by the researcher',
-    'Every report is read and reviewed. You will see status updates on your own reports as they are evaluated.'));
-  grid.append(featureCard('🌍', 'Global map',
-    'Browse public sightings reported worldwide on an interactive map.'));
+  grid.append(featureCard('document', 'Structured reporting',
+    'Categories in plain language, photo &amp; video attachments, location, witness count, and duration.'));
+  grid.append(featureCard('eye', 'Researcher review',
+    'Every report is read and evaluated. Status updates flow back to the reporter.'));
+  grid.append(featureCard('map', 'Sightings across India',
+    'Browse public sightings reported from across India on an interactive map.'));
   view.append(grid);
 }
 
-function featureCard(icon, title, body) {
-  return el('div', { class: 'feature-card', style: 'cursor:default' }, [
-    el('span', { class: 'icon' }, icon),
+function featureCard(iconName, title, body) {
+  return el('div', { class: 'feature-card feature-card-static' }, [
+    icon(iconName, { size: 26, className: 'feature-icon' }),
     el('h3', {}, title),
     el('p', {}, body),
   ]);

@@ -42,7 +42,7 @@ const SEED_SIGHTINGS = [
     witnessCount: 2,
     sightedAt: Date.now() - 86400000 * 3,
     durationText: '~4 minutes',
-    location: { lat: 34.0901, lng: -118.4065, place: 'Beverly Hills, CA' },
+    location: { lat: 12.9716, lng: 77.5946, place: 'Bengaluru, Karnataka' },
     description:
       'Three pulsing amber lights moved in a tight triangle, silent, against the wind. They held formation for ~3 minutes then accelerated north at impossible speed.',
     media: [
@@ -63,9 +63,9 @@ const SEED_SIGHTINGS = [
     witnessCount: 1,
     sightedAt: Date.now() - 86400000 * 14,
     durationText: '~90 seconds',
-    location: { lat: 36.1699, lng: -115.1398, place: 'Las Vegas, NV' },
+    location: { lat: 19.0760, lng: 72.8777, place: 'Mumbai, Maharashtra' },
     description:
-      'Metallic disc, ~30m diameter, hovered at low altitude over the strip. No sound, no visible propulsion. Departed instantly.',
+      'Metallic disc, ~30m diameter, hovered at low altitude over Marine Drive. No sound, no visible propulsion. Departed instantly.',
     media: [],
     status: 'verified',
     adminNotes: 'Cross-referenced with two corroborating witness accounts.',
@@ -82,7 +82,7 @@ const SEED_SIGHTINGS = [
     witnessCount: 5,
     sightedAt: Date.now() - 86400000 * 28,
     durationText: '~12 minutes',
-    location: { lat: 51.5074, lng: -0.1278, place: 'London, UK' },
+    location: { lat: 28.7041, lng: 77.1025, place: 'New Delhi' },
     description: 'A bright reflective sphere drifted slowly across a clear sky, then split into two distinct objects before disappearing.',
     media: [],
     status: 'reviewed',

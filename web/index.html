@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#070b1a" />
-  <meta name="description" content="Sabir UFO — a serious investigative platform for reporting and researching UFO sightings worldwide." />
+  <meta name="description" content="Sabir UFO — India's serious platform for reporting and researching UFO sightings across the country." />
   <title>Sabir UFO · Sighting & Research</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,9 +18,15 @@
 
   <header class="app-header" id="appHeader">
     <a href="#/" class="brand" aria-label="Sabir UFO home">
-      <span class="brand-mark">🛸</span>
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="12" cy="14" rx="9" ry="2.6"/>
+          <path d="M7 14c0-2.8 2.2-5 5-5s5 2.2 5 5"/>
+          <circle cx="12" cy="8" r="1.4"/>
+        </svg>
+      </span>
       <span class="brand-name">Sabir UFO</span>
-      <span class="brand-sub">Sighting & Research</span>
+      <span class="brand-sub">UFO Sighting Archive · India</span>
     </a>
     <nav class="nav" id="navLinks" hidden>
       <a href="#/dashboard">Dashboard</a>
@@ -36,7 +42,7 @@
   <main id="view" class="view" aria-live="polite"></main>
 
   <footer class="app-footer">
-    <span>© <span id="year"></span> Sabir UFO Research · Built for investigative inquiry</span>
+    <span>© <span id="year"></span> Sabir UFO Research</span>
   </footer>
 
   <div id="toasts" class="toasts" role="status" aria-live="polite"></div>

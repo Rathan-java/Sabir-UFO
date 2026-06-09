@@ -5,10 +5,11 @@ export function startStarfield() {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
+  // Restrained: fewer stars, slower drift, lower alpha. Subtle texture only.
   const layers = [
-    { count: 90, speed: 0.04, sizeMin: 0.3, sizeMax: 0.9, alpha: 0.55 },
-    { count: 60, speed: 0.10, sizeMin: 0.6, sizeMax: 1.4, alpha: 0.75 },
-    { count: 25, speed: 0.20, sizeMin: 1.0, sizeMax: 2.0, alpha: 1.0 },
+    { count: 40, speed: 0.015, sizeMin: 0.3, sizeMax: 0.7, alpha: 0.35 },
+    { count: 25, speed: 0.04,  sizeMin: 0.5, sizeMax: 1.0, alpha: 0.50 },
+    { count: 10, speed: 0.08,  sizeMin: 0.8, sizeMax: 1.3, alpha: 0.65 },
   ];
 
   let stars = [];
@@ -47,10 +48,11 @@ export function startStarfield() {
     for (const s of stars) {
       s.y += s.s;
       if (s.y > h + 4) { s.y = -4; s.x = Math.random() * w; }
-      const twinkle = 0.6 + Math.sin(t * 0.001 + s.tw) * 0.4;
+      // Very subtle twinkle (much less amplitude than before)
+      const twinkle = 0.85 + Math.sin(t * 0.0005 + s.tw) * 0.15;
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(220, 230, 255, ${s.a * twinkle * 0.85})`;
+      ctx.fillStyle = `rgba(200, 213, 240, ${s.a * twinkle * 0.7})`;
       ctx.fill();
     }
     requestAnimationFrame(frame);

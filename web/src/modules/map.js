@@ -58,9 +58,11 @@ export async function renderMap() {
     return;
   }
 
+  // Default view centred on India. fitBounds() below overrides this when
+  // there are pins; the centre only matters when no sightings exist yet.
   const map = L.map(container, {
-    center: [20, 0],
-    zoom: 2,
+    center: [22.5937, 78.9629],
+    zoom: 5,
     worldCopyJump: true,
     scrollWheelZoom: true,
   });

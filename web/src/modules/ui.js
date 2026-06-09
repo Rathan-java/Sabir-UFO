@@ -90,3 +90,29 @@ export function setActiveNav(hash) {
     a.classList.toggle('active', isActive);
   });
 }
+
+// ---- Monochrome line icons (replaces emoji throughout the UI)
+// Each is a 24x24 stroke-only SVG inheriting currentColor.
+const ICONS = {
+  ufo: '<path d="M3 14c0-1.5 4-3 9-3s9 1.5 9 3-4 3-9 3-9-1.5-9-3z"/><path d="M7 14c0-3 2-5 5-5s5 2 5 5"/><circle cx="12" cy="8" r="1.6"/><line x1="6" y1="16.5" x2="5" y2="18"/><line x1="18" y1="16.5" x2="19" y2="18"/>',
+  book: '<path d="M5 4a2 2 0 0 1 2-2h12v18H7a2 2 0 0 0-2 2V4z"/><line x1="9" y1="7" x2="16" y2="7"/><line x1="9" y1="11" x2="16" y2="11"/>',
+  video: '<rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 11 5-3v8l-5-3z"/>',
+  folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  map: '<path d="M12 22s-7-7-7-12a7 7 0 0 1 14 0c0 5-7 12-7 12z"/><circle cx="12" cy="10" r="2.5"/>',
+  shield: '<path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z"/><polyline points="9 12 11 14 15 10"/>',
+  document: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/>',
+  eye: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  satellite: '<path d="M5 19 19 5"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="m9 9 6 6"/>',
+  ufoBrand: '<ellipse cx="12" cy="14" rx="9" ry="2.6"/><path d="M7 14c0-2.8 2.2-5 5-5s5 2.2 5 5"/><circle cx="12" cy="8" r="1.4"/>',
+};
+
+export function icon(name, opts = {}) {
+  const { size = 22, strokeWidth = 1.5, className = '' } = opts;
+  const span = document.createElement('span');
+  span.className = `icon ${className}`.trim();
+  span.setAttribute('aria-hidden', 'true');
+  const path = ICONS[name] || '';
+  span.innerHTML = `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+  return span;
+}
