@@ -21,7 +21,7 @@ export function renderDashboard() {
     'Get the researcher\'s book on UFO encounters. Purchase is handled directly via WhatsApp.',
     '#/ebook'));
   grid.append(card('video', 'UFO Interviews',
-    'Watch curated YouTube interviews with pilots, witnesses, and investigators.',
+    'Watch field interviews given by Mr. Sabir Hussain, Founder of INSUFOS — covering encounters, pilot testimony, and ongoing investigations.',
     '#/interviews'));
   view.append(grid);
 

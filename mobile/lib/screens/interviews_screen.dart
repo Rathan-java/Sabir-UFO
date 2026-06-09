@@ -11,7 +11,7 @@ class InterviewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('UFO Interviews')),
+      appBar: AppBar(title: const Text('Interviews by Sabir Hussain')),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('interviews').orderBy('order').snapshots(),

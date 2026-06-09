@@ -68,7 +68,7 @@ class DashboardScreen extends StatelessWidget {
               _Card(
                 icon: Icons.play_circle_outline,
                 title: 'UFO Interviews',
-                body: 'Watch curated YouTube interviews with pilots, witnesses, and investigators.',
+                body: 'Field interviews by Mr. Sabir Hussain, Founder of INSUFOS — encounters, pilot testimony, and investigations.',
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const InterviewsScreen()),
                 ),

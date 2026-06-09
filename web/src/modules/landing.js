@@ -22,8 +22,8 @@ export function renderLanding() {
   const grid = el('div', { class: 'cards-grid' });
   grid.append(featureCard('document', 'Structured reporting',
     'Categories in plain language, photo &amp; video attachments, location, witness count, and duration.'));
-  grid.append(featureCard('eye', 'Researcher review',
-    'Every report is read and evaluated. Status updates flow back to the reporter.'));
+  grid.append(featureCard('eye', 'Reviewed by Sabir Hussain',
+    'Every report is read and evaluated by Mr. Sabir Hussain, Founder of INSUFOS. Status updates flow back to the reporter.'));
   grid.append(featureCard('map', 'Sightings across India',
     'Browse public sightings reported from across India on an interactive map.'));
   view.append(grid);

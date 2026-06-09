@@ -9,11 +9,11 @@ export async function renderInterviews() {
   view.innerHTML = '';
 
   view.append(el('div', { class: 'row between', style: 'margin-bottom:8px' }, [
-    el('h2', { style: 'margin:0' }, 'UFO Interviews'),
+    el('h2', { style: 'margin:0' }, 'Interviews by Sabir Hussain'),
     el('a', { class: 'btn btn-ghost', href: '#/dashboard' }, '← Dashboard'),
   ]));
   view.append(el('p', { class: 'muted', style: 'margin-top:0' },
-    'Curated YouTube interviews with the researcher. Tap to watch on YouTube.'));
+    'Field interviews and recorded talks by Mr. Sabir Hussain, Founder of INSUFOS. Tap any card to watch on YouTube.'));
 
   const items = await listInterviews();
 
