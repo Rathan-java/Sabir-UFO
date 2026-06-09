@@ -8,10 +8,10 @@ export function renderLanding() {
   view.innerHTML = '';
 
   const hero = el('section', { class: 'hero' });
-  hero.append(el('div', { class: 'tag' }, 'INVESTIGATIVE NETWORK · v0.1'));
+  hero.append(el('div', { class: 'tag' }, 'DOCUMENTING UFO ENCOUNTERS'));
   hero.append(el('h1', {}, 'Sabir UFO'));
   hero.append(el('p', {},
-    'A serious, witness-driven archive of the modern UAP phenomenon. Report sightings on the full Hynek/Vallée scale, watch field interviews, and contribute to ongoing research.'));
+    'A serious archive for people who have seen something they cannot explain. Report what you witnessed, browse field interviews, and contribute to ongoing investigation.'));
 
   const ctaRow = el('div', { class: 'row', style: 'justify-content:center;gap:14px;margin-top:8px' });
   ctaRow.append(el('button', { class: 'btn btn-google', onclick: signIn }, [googleIcon(), 'Continue with Google']));
@@ -20,12 +20,12 @@ export function renderLanding() {
   view.append(hero);
 
   const grid = el('div', { class: 'cards-grid' });
-  grid.append(featureCard('🛸', 'Structured reports',
-    'Classify with Hynek/Vallée, attach photos & videos, pin a location, record duration and witnesses.'));
-  grid.append(featureCard('🛰️', 'Researcher-reviewed',
-    'Every sighting lands in an admin queue. Status updates flow back to you in My Reports.'));
+  grid.append(featureCard('🛸', 'Easy-to-fill report',
+    'Pick a category in plain language, attach photos and videos, record where and when you saw it, and how long it lasted.'));
+  grid.append(featureCard('🛰️', 'Reviewed by the researcher',
+    'Every report is read and reviewed. You will see status updates on your own reports as they are evaluated.'));
   grid.append(featureCard('🌍', 'Global map',
-    'Browse public sightings worldwide on an interactive Leaflet map.'));
+    'Browse public sightings reported worldwide on an interactive map.'));
   view.append(grid);
 }
 

@@ -45,7 +45,7 @@ class LandingScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 28),
                   const Text(
-                    'A serious, witness-driven archive of the modern UAP phenomenon.',
+                    'A serious archive for people who have seen something they cannot explain. Report what you witnessed and contribute to ongoing investigation.',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: SabirUfoTheme.textDim, fontSize: 15, height: 1.5),
                   ),

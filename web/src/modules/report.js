@@ -23,10 +23,12 @@ export function renderReport() {
   const panel = el('div', { class: 'panel' });
   const form = el('form', { class: 'form', novalidate: true });
 
-  // Classification + shape
+  // Classification + shape (plain-language labels for first-time reporters)
   form.append(twoCol(
-    field('classification', 'Classification', selectInput('classification', HYNEK_CLASSIFICATIONS, '', true)),
-    field('objectShape', 'Object shape', selectInput('objectShape', OBJECT_SHAPES, 'Light')),
+    field('classification', 'What kind of sighting was it?',
+      selectInput('classification', HYNEK_CLASSIFICATIONS, '', true)),
+    field('objectShape', 'What shape was it?',
+      selectInput('objectShape', OBJECT_SHAPES, 'Light (just a point or ball of light)')),
   ));
 
   // Sighted at + duration
@@ -59,10 +61,10 @@ export function renderReport() {
   form.append(locField);
 
   // Description
-  form.append(field('description', 'Describe what you saw',
+  form.append(field('description', 'In your own words, describe what you saw',
     el('textarea', {
       id: 'description', required: true, maxlength: 5000,
-      placeholder: 'Be specific: shape, color, motion, sound (or lack of), how it ended…',
+      placeholder: 'Be as detailed as you can — what it looked like, how it moved, any sound (or silence), how it ended. Plain language is fine.',
     }), true));
 
   // Media uploader

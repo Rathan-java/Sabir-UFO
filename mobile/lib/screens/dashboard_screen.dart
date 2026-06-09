@@ -44,13 +44,13 @@ class DashboardScreen extends StatelessWidget {
               Text('Welcome back, ${name.split(' ').first}.',
                   style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
               const SizedBox(height: 6),
-              const Text('Pick a mission below.',
+              const Text('Submit a new sighting, browse interviews, or review your past reports.',
                   style: TextStyle(color: SabirUfoTheme.textDim)),
               const SizedBox(height: 24),
               _Card(
                 icon: '🛸',
                 title: 'Report a UFO Sighting',
-                body: 'Submit a structured report with photos, videos, and the full Hynek/Vallée classification.',
+                body: 'Submit a report with photos, videos, location, and an easy-to-pick category.',
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ReportScreen()),
                 ),
@@ -58,8 +58,8 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 14),
               _Card(
                 icon: '📖',
-                title: 'eBook Purchase',
-                body: 'Get the researcher\'s field volume — checkout via WhatsApp.',
+                title: 'eBook',
+                body: 'Get the researcher\'s book on UFO encounters. Purchase via WhatsApp.',
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const EbookScreen()),
                 ),

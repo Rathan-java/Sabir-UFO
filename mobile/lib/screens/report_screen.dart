@@ -17,7 +17,7 @@ class ReportScreen extends StatefulWidget {
 
 class _ReportScreenState extends State<ReportScreen> {
   String _classification = AppConfig.classifications.first;
-  String _shape = 'Light';
+  String _shape = 'Light (just a point or ball of light)';
   final _desc = TextEditingController();
   final _place = TextEditingController();
   final _duration = TextEditingController();
@@ -104,7 +104,8 @@ class _ReportScreenState extends State<ReportScreen> {
         children: [
           DropdownButtonFormField<String>(
             value: _classification,
-            decoration: const InputDecoration(labelText: 'CLASSIFICATION *'),
+            isExpanded: true,
+            decoration: const InputDecoration(labelText: 'WHAT KIND OF SIGHTING? *'),
             items: AppConfig.classifications
                 .map((c) => DropdownMenuItem(value: c, child: Text(c, overflow: TextOverflow.ellipsis)))
                 .toList(),
@@ -113,8 +114,11 @@ class _ReportScreenState extends State<ReportScreen> {
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
             value: _shape,
-            decoration: const InputDecoration(labelText: 'OBJECT SHAPE'),
-            items: AppConfig.objectShapes.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+            isExpanded: true,
+            decoration: const InputDecoration(labelText: 'WHAT SHAPE WAS IT?'),
+            items: AppConfig.objectShapes
+                .map((s) => DropdownMenuItem(value: s, child: Text(s, overflow: TextOverflow.ellipsis)))
+                .toList(),
             onChanged: (v) => setState(() => _shape = v ?? _shape),
           ),
           const SizedBox(height: 12),
@@ -173,7 +177,10 @@ class _ReportScreenState extends State<ReportScreen> {
             controller: _desc,
             maxLines: 6,
             maxLength: 5000,
-            decoration: const InputDecoration(labelText: 'DESCRIPTION *'),
+            decoration: const InputDecoration(
+              labelText: 'IN YOUR OWN WORDS — WHAT DID YOU SEE? *',
+              hintText: 'What it looked like, how it moved, any sound, how it ended.',
+            ),
           ),
           const SizedBox(height: 8),
           OutlinedButton.icon(

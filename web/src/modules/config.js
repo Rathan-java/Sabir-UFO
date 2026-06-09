@@ -28,20 +28,29 @@ export const config = {
   },
 };
 
+// Sighting categories — plain-language labels for first-time reporters.
+// The technical term stays as a prefix so researchers still recognize it,
+// followed by a short description anyone can understand.
 export const HYNEK_CLASSIFICATIONS = [
-  'Nocturnal Lights',
-  'Daylight Discs',
-  'Radar–Visual',
-  'Close Encounter of the First Kind (CE-1)',
-  'Close Encounter of the Second Kind (CE-2)',
-  'Close Encounter of the Third Kind (CE-3)',
-  'Close Encounter of the Fourth Kind (CE-4 — abduction)',
-  'Close Encounter of the Fifth Kind (CE-5 — direct communication)',
-  'Other / Unknown',
+  'Nocturnal Lights (Glowing lights or ball-shaped UFO seen at night)',
+  'Daylight Discs (Disc or saucer-shaped UFO seen in daylight)',
+  'Radar-Visual (UFO seen with eyes AND picked up on radar)',
+  'Close Encounter of the First Kind (Saw a UFO up close, no contact)',
+  'Close Encounter of the Second Kind (UFO left physical traces — burn marks, ground impressions, electrical interference)',
+  'Close Encounter of the Third Kind (Saw beings or creatures near the UFO)',
+  'Close Encounter of the Fourth Kind (Felt taken aboard or abducted)',
+  'Close Encounter of the Fifth Kind (Communicated directly with beings)',
+  'Other / Not sure',
 ];
 
 export const OBJECT_SHAPES = [
-  'Disc', 'Triangle', 'Sphere', 'Cigar', 'Cluster', 'Light', 'Other',
+  'Disc (saucer-shaped)',
+  'Triangle (triangular)',
+  'Sphere (round / ball)',
+  'Cigar (long, tube-shaped)',
+  'Cluster (group of small UFOs together)',
+  'Light (just a point or ball of light)',
+  'Other',
 ];
 
 export const STATUSES = ['pending', 'reviewed', 'verified', 'rejected'];
