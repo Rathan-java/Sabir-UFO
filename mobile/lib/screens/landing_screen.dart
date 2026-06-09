@@ -24,18 +24,21 @@ class LandingScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text('🛸', style: TextStyle(fontSize: 60)),
-                  const SizedBox(height: 16),
-                  ShaderMask(
-                    shaderCallback: (b) => const LinearGradient(
-                      colors: [Colors.white, SabirUfoTheme.cyan, SabirUfoTheme.violet],
-                    ).createShader(b),
-                    child: const Text(
-                      'Sabir UFO',
-                      style: TextStyle(
-                        fontSize: 44, fontWeight: FontWeight.w700,
-                        letterSpacing: 3, color: Colors.white,
-                      ),
+                  Container(
+                    width: 64, height: 64,
+                    decoration: BoxDecoration(
+                      color: SabirUfoTheme.accent.withOpacity(0.08),
+                      border: Border.all(color: SabirUfoTheme.accent.withOpacity(0.25)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.travel_explore, size: 32, color: SabirUfoTheme.accent),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Sabir UFO',
+                    style: TextStyle(
+                      fontSize: 36, fontWeight: FontWeight.w700,
+                      letterSpacing: 0, color: SabirUfoTheme.text,
                     ),
                   ),
                   const SizedBox(height: 8),

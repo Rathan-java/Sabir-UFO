@@ -20,7 +20,7 @@ class DashboardScreen extends StatelessWidget {
     final user = AuthService.instance.currentUser;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🛸  Sabir UFO'),
+        title: const Text('Sabir UFO'),
         actions: [
           IconButton(
             icon: const Icon(Icons.person_outline),
@@ -48,25 +48,25 @@ class DashboardScreen extends StatelessWidget {
                   style: TextStyle(color: SabirUfoTheme.textDim)),
               const SizedBox(height: 24),
               _Card(
-                icon: '🛸',
+                icon: Icons.description_outlined,
                 title: 'Report a UFO Sighting',
                 body: 'Submit a report with photos, videos, location, and an easy-to-pick category.',
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const ReportScreen()),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
               _Card(
-                icon: '📖',
+                icon: Icons.menu_book_outlined,
                 title: 'eBook',
                 body: 'Get the researcher\'s book on UFO encounters. Purchase via WhatsApp.',
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const EbookScreen()),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
               _Card(
-                icon: '🎥',
+                icon: Icons.play_circle_outline,
                 title: 'UFO Interviews',
                 body: 'Watch curated YouTube interviews with pilots, witnesses, and investigators.',
                 onTap: () => Navigator.of(context).push(
@@ -74,29 +74,29 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const Divider(height: 1),
+              const Divider(height: 1, color: SabirUfoTheme.border),
               const SizedBox(height: 16),
               _Card(
-                icon: '📂',
+                icon: Icons.folder_outlined,
                 title: 'My Reports',
-                body: 'Track the status of every sighting you\'ve submitted.',
+                body: 'Track the status of every sighting you have submitted.',
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const MyReportsScreen()),
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 12),
               _Card(
-                icon: '🌍',
+                icon: Icons.map_outlined,
                 title: 'Sightings Map',
-                body: 'Public sightings plotted on an interactive map.',
+                body: 'See public sightings reported across India.',
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const MapScreen()),
                 ),
               ),
               if (isAdmin) ...[
-                const SizedBox(height: 14),
+                const SizedBox(height: 12),
                 _Card(
-                  icon: '🛰️',
+                  icon: Icons.shield_outlined,
                   title: 'Admin Console',
                   body: 'Review every incoming report.',
                   onTap: () => Navigator.of(context).push(
@@ -113,7 +113,7 @@ class DashboardScreen extends StatelessWidget {
 }
 
 class _Card extends StatelessWidget {
-  final String icon;
+  final IconData icon;
   final String title;
   final String body;
   final VoidCallback onTap;
@@ -122,32 +122,40 @@ class _Card extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: SabirUfoTheme.panel.withOpacity(0.55),
-      borderRadius: BorderRadius.circular(14),
+      color: SabirUfoTheme.panel,
+      borderRadius: BorderRadius.circular(8),
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(8),
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
             border: Border.all(color: SabirUfoTheme.border),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             children: [
-              Text(icon, style: const TextStyle(fontSize: 32)),
-              const SizedBox(width: 16),
+              Container(
+                width: 44, height: 44,
+                decoration: BoxDecoration(
+                  color: SabirUfoTheme.accent.withOpacity(0.08),
+                  border: Border.all(color: SabirUfoTheme.accent.withOpacity(0.18)),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Icon(icon, color: SabirUfoTheme.accent, size: 22),
+              ),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 4),
-                    Text(body, style: const TextStyle(color: SabirUfoTheme.textDim, fontSize: 13)),
+                    Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 3),
+                    Text(body, style: const TextStyle(color: SabirUfoTheme.textDim, fontSize: 13, height: 1.4)),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: SabirUfoTheme.cyan),
+              const Icon(Icons.chevron_right, color: SabirUfoTheme.textFaint, size: 20),
             ],
           ),
         ),

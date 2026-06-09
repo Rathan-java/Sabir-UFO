@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
 
-/// Cosmic dark theme — neon cyan/violet on deep space.
+/// Restrained dark theme — research/investigative feel.
+/// Single muted steel-blue accent. No neon, no rainbow gradients.
 class SabirUfoTheme {
-  static const Color bg0 = Color(0xFF04060F);
-  static const Color bg1 = Color(0xFF070B1A);
-  static const Color bg2 = Color(0xFF0C1230);
-  static const Color panel = Color(0xFF0D1330);
-  static const Color text = Color(0xFFE7ECFF);
-  static const Color textDim = Color(0xFF9AA3C7);
-  static const Color textFaint = Color(0xFF6B7299);
-  static const Color cyan = Color(0xFF7BE9FF);
-  static const Color violet = Color(0xFFA06BFF);
-  static const Color magenta = Color(0xFFFF6BD6);
-  static const Color green = Color(0xFF6BFFB3);
-  static const Color amber = Color(0xFFFFCF6B);
-  static const Color red = Color(0xFFFF6B8A);
-  static const Color border = Color(0x2E7BE9FF); // ~0.18 alpha
+  static const Color bg0 = Color(0xFF0A0D14);
+  static const Color bg1 = Color(0xFF0F131C);
+  static const Color bg2 = Color(0xFF161B27);
+  static const Color panel = Color(0xFF141A28);
+  static const Color text = Color(0xFFE6EBF5);
+  static const Color textDim = Color(0xFF98A0B3);
+  static const Color textFaint = Color(0xFF6B7388);
+  // Aliases kept so existing references stay valid; all map to the
+  // new muted palette. There is no real cyan/violet/magenta anymore.
+  static const Color accent = Color(0xFF6AA6E0);       // muted steel-blue
+  static const Color accentDim = Color(0xFF4A82BD);
+  static const Color cyan = accent;                    // alias
+  static const Color violet = Color(0xFF8A7EC4);       // muted
+  static const Color magenta = Color(0xFFD97A8A);      // muted (red-ish)
+  static const Color green = Color(0xFF7FC59A);
+  static const Color amber = Color(0xFFD6B170);
+  static const Color red = Color(0xFFD97A8A);
+  static const Color border = Color(0x1AC8D5F0); // ~0.10 alpha cool-grey
 
   static ThemeData build() {
     final base = ThemeData.dark(useMaterial3: true);
     return base.copyWith(
       scaffoldBackgroundColor: bg0,
       colorScheme: const ColorScheme.dark(
-        primary: cyan,
+        primary: accent,
         secondary: violet,
         surface: bg1,
         onSurface: text,
@@ -52,11 +57,11 @@ class SabirUfoTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: cyan,
-          foregroundColor: bg1,
+          backgroundColor: accent,
+          foregroundColor: bg0,
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -80,7 +85,7 @@ class SabirUfoTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: cyan, width: 1.5),
+          borderSide: const BorderSide(color: accent, width: 1.5),
         ),
         labelStyle: const TextStyle(color: textDim, letterSpacing: 1.4),
       ),
